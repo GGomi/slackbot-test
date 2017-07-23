@@ -61,25 +61,41 @@ function userIdToName(id) {
     return '';
 }
 
-bot.on('start',function () {
+bot.on('start',function (data) {
+    var answer = '안녕하세요. 저는 멋쟁이사자입니다.';
+    var channelName = channelIdToName(data.channel);
+    var userName = userIdToName(data.user);
+    if(channelName != '') {
+        bot.postMessageToChannel(channelName,answer,params);
+    } else {
+        bot.postMessageToUser(userName,answer, params);
+    }
 });
 
 bot.on('message',function (data) {
     //console.log(data);
     if(data.type == 'message'){
+        //봇이 속한 채널이름 가져오기
         var channelName = channelIdToName(data.channel);
-        // console.log(channelName);
+
+        //채팅을 한 유저네임 가져오기
         var userName = userIdToName(data.user);
+
+        //채팅내용을 저장
         var text = data.text;
+
         //console.log(data.ts + ':' + data.channel+'['+channelName+']:'+data.user+'['+userName+']:'+data.text);
-        if(text.indexOf('안녕') != -1){
-            var answer = 'Hello, World.';
+
+        //조건 시작
+        if(text.indexOf('사자야') != -1&&text.indexOf('안녕') != -1){
+            var answer = '안녕하세요 저는 멋쟁이사자입니다.';
             if(channelName != '') {
                 bot.postMessageToChannel(channelName,answer,params);
             } else {
                 bot.postMessageToUser(userName,answer, params);
             }
-        } else if(text.indexOf('인기검색어 보여줘') != -1){
+        } else if(text.indexOf('사자야') != -1&&text.indexOf('인기검색어 보여줘') != -1 ){
+            //인기검색어 출력 기능
             //console.log('im in');
             var url = "https://www.naver.com";
             request(url, function(error, response, body) {
@@ -100,6 +116,8 @@ bot.on('message',function (data) {
                     bot.postMessageToUser(userName,answer,params);
                 }
             });
+        } else if(text.indexOf('사자야') != -1 && text.indexOf('기능보여줘')){
+
         }
 
     }
