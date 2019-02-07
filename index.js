@@ -123,6 +123,45 @@ bot.on('message',function (data) {
                 bot.postMessageToUser(userName,answer,params);
             }
         }
+        else if(text.indexOf('세경') !=-1 && text.indexOf('알람 맞춰줘')!= -1 ){
+            var who;
+            var when;
+            var what;
+            var addwhen=false;
+            var textarray = text.split(" ");
+            for(var x=0; x<textarray.length;x++){
+                if(textarray[x].indexOf("에게")>-1){
+                    who = textarray[x].split("에게")[0];
+                }
+                else if(textarray[x].indexOf("후에")>-1){
+                    when = textarray[x].split("후에")[0];
+                    addwhen=true;
+                }
+                else if(textarray[x].indexOf("에")>-1){
+                    when = textarray[x].split("에")[0];
+                }
+                else if(textarray[x].indexOf("라고")>-1){
+                    what = textarray[x].split("라고")[0];
+                }
+            }
+            var hour = when.split("시")[0];
+            var min = when.split("시")[1].split("분")[0];
+            var now = new Date();
+            var future = new Date();
+            future.setHours(hour,min,"00");
+            var differTime = future.getTime() - now.getTime();
+            setTimeout(function(){
+                if(who=="전부" || who=="모두" ){
+                    bot.postMessageToChannel(channelName,what,params);                 
+                }
+                else if(who == undefined || who =="나"){
+                    bot.postMessageToUser(userName,what,params);  
+                }
+                else{
+                    bot.postMessageToUser(who,what,params);
+                }
+            },differTime);
+        }
     }
 });
 
