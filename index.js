@@ -1,11 +1,3 @@
-/*
- * Created By: CheeseLab
- *
- * Date: 2017-07-22
- *
- * User: Jeongmin
- */
-
 //create a bot
 var Bot = require('slackbots');
 
@@ -15,13 +7,13 @@ var cheerio = require("cheerio");
 
 // create setting
 var setting = {
-    token : '<Insert-Your-Token>',
-    name : 'slackbot'
+    token : 'TOKEN CODE',
+    name : 'Im BOT'
 };
 
-var list = "1. 사자야 안녕\n";
-list += "2. 사자야 인기검색어 보여줘\n";
-list += "3. 사자야 기능보여줘\n";
+var list = "1. 세경아 안녕\n";
+list += "2. 세경아 인기검색어 보여줘\n";
+list += "3. 세경아 기능보여줘\n";
 var bot = new Bot(setting);
 var params = {
     as_user : 'true',
@@ -32,7 +24,7 @@ function channelIdToName(id) {
         && (typeof channels._value !== 'undefined')
         && (typeof channels._value.channels !== 'undefined')){
         channels = channels._value.channels;
-        //console.log(channels);
+        // console.log(channels);
         for(var i=0; i<channels.length; i++){
             if(channels[i].id == id){
                 return channels[i].name;
@@ -43,6 +35,7 @@ function channelIdToName(id) {
 }
 function userIdToName(id) {
     var users = bot.getUsers();
+    console.log(id);
     if ((typeof users !== 'undefined')
         && (users._value !== 'undefined')
         && (users._value.members !== 'undefined')) {
@@ -56,7 +49,7 @@ function userIdToName(id) {
     return '';
 }
 bot.on('start',function () {
-    // var answer = '안녕하세요. 저는 멋쟁이사자입니다.';
+    // var answer = '안녕하세요. 저는 봇입니다.';
     // var channelName = channelIdToName(data.channel);
     // var userName = userIdToName(data.user);
     // if(channelName != '') {
@@ -79,15 +72,15 @@ bot.on('message',function (data) {
 
         //console.log(data.ts + ':' + data.channel+'['+channelName+']:'+data.user+'['+userName+']:'+data.text);
         //조건 시작
-        if(text.indexOf('사자야') != -1&&text.indexOf('안녕') != -1){
+        if(text.indexOf('세경아') != -1&&text.indexOf('안녕') != -1){
             //인사 기능
-            var answer = '안녕하세요 저는 멋쟁이사자입니다.';
+            var answer = '안녕하세요 저는 신세경입니다.';
             if(channelName != '') {
                 bot.postMessageToChannel(channelName,answer,params);
             } else {
                 bot.postMessageToUser(userName,answer,params);
             }
-        } else if(text.indexOf('사자야') != -1 && text.indexOf('인기검색어 보여') != -1 ){
+        } else if(text.indexOf('세경') != -1 && text.indexOf('인기검색어 보여') != -1 ){
             //인기검색어 출력 기능
             var url = "https://www.naver.com";
             request(url, function(error, response, body) {
@@ -107,7 +100,7 @@ bot.on('message',function (data) {
                     bot.postMessageToUser(userName,answer,params);
                 }
             });
-        } else if(text.indexOf('사자야') != -1 && text.indexOf('기능보여줘') != -1){
+        } else if(text.indexOf('세경') != -1 && text.indexOf('기능보여줘') != -1){
             //기능 출력
             var answer = list;
             if(channelName != '') {
@@ -115,10 +108,36 @@ bot.on('message',function (data) {
             } else {
                 bot.postMessageToUser(userName,answer,params);
             }
+        } else if(badWord(text) != true) {
+            var answer = '';
+            if(text.indexOf('세경') != -1) {
+                var list = ['뭐라고????','ㅎㅎ..정말싫다..','쓰레기냐?'];
+                answer = list[Math.floor(Math.random() * list.length)];
+            } else {
+                answer = "욕하지말아요~~";
+            }
+            
+            if(channelName != '') {
+                bot.postMessageToChannel(channelName,answer,params);
+            } else {
+                bot.postMessageToUser(userName,answer,params);
+            }
         }
-
     }
 });
+
+function badWord(text) {
+    var list = ['닥쳐','씨발','시발','미친','개새끼','새끼','섹스','여친'];
+    var flag = true;
+    list.some(word => {
+        if(text.indexOf(word) != -1) {
+            flag = false;
+            return true;
+        }
+    });
+
+    return flag;
+}
 
 
 
