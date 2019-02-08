@@ -184,6 +184,48 @@ bot.on('message',function (data) {
                    
                 }
             },differTime);
+        }else if(text.indexOf('세경') != -1 && text.indexOf('맛집 추천해줘') != -1){
+            var where;
+            var url = "https://store.naver.com/restaurants/list?filterId=s13473078";
+            var textArray = text.split();
+            var answer;
+            if(textArray[1].indexOf(역)>-1){
+                where = textArray[1];
+            }     
+            if(where !=null){
+                url=url+"&query="+where
+            }
+            request(url,function(error,response,body){
+                if(error)throw error;
+                var $ = cheerio.load(body);
+                var placeList = $(".list_item_inner .info_area .tit .tit_inner");
+                if(where==null||placeList.length==0){
+                    answer="ex) 세경아 OO역 맛집 추천해줘"
+                    if(channelName != '') {
+                        bot.postMessageToChannel(channelName,answer,params);
+                    } else {
+                        bot.postMessageToUser(userName,answer,params);
+                    }
+                }
+                else{
+                    answer=where+" 맛집 리스트\n";
+                    placeList.each(function(data){
+                        var text= $(this).find("name").attr("title");
+                        var category = $(this).find("category").text();
+                        var link= $(this).find("name").attr("href");
+                        answer+="<"+link+"|"+text+"("+category+")>\n";
+                    })
+                    if(channelName != '') {
+                        bot.postMessageToChannel(channelName,answer,params);
+                    } else {
+                        bot.postMessageToUser(userName,answer,params);
+                    }
+                }
+            });
+           
+            
+          
+                
         }
     }
 });
