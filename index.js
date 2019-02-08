@@ -144,21 +144,44 @@ bot.on('message',function (data) {
                     what = textarray[x].split("라고")[0];
                 }
             }
-            var hour = when.split("시")[0];
-            var min = when.split("시")[1].split("분")[0];
             var now = new Date();
             var future = new Date();
-            future.setHours(hour,min,"00");
+            if(addwhen){
+                if(when.split("시간").length==2){
+                    var hour = when.split("시간")[0]*1;
+                    var min =0;
+                    if(when.split("분").length==2){
+                    min = when.split("시간")[1].split("분")[0]*1;
+                    }
+                    
+                    future.setHours(now.getHours()+hour,now.getMinutes()+min);
+                }
+                else{
+                    var min = when.split("분")[0]*1;
+                    console.log(min);
+                    future.setMinutes(now.getMinutes()+min);
+                }
+            }
+            else{
+                var hour = when.split("시")[0]*1;
+                var min = when.split("시")[1].split("분")[0]*1;
+                var ampm = when.split("시")[1].split("분")[1];
+                if(ampm=="pm"){hour = hour+12;}     
+                future.setHours(hour,min,"00");
+            }
             var differTime = future.getTime() - now.getTime();
             setTimeout(function(){
                 if(who=="전부" || who=="모두" ){
-                    bot.postMessageToChannel(channelName,what,params);                 
+                    bot.postMessageToChannel(channelName,what,params);   
+                            
                 }
                 else if(who == undefined || who =="나"){
-                    bot.postMessageToUser(userName,what,params);  
+                    bot.postMessageToUser(userName,what,params);
+                     
                 }
                 else{
                     bot.postMessageToUser(who,what,params);
+                   
                 }
             },differTime);
         }
