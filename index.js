@@ -1,3 +1,11 @@
+/*
+ * Created By: CheeseLab
+ *
+ * Date: 2017-07-22
+ *
+ * User: Jeongmin
+ */
+
 // querystring
 var qs = require("querystring");
 var answer;
@@ -65,17 +73,18 @@ bot.on('start', function (data) {
 });
 
 bot.on('message', function (data) {
-    if (data.type == 'message') {
-        answer = '';
-        //봇이 속한 채널이름 가져오기
-        var channelName = channelIdToName(data.channel);
+    //봇이 속한 채널이름 가져오기
+    var channelName = channelIdToName(data.channel);
 
-        //채팅을 한 유저네임 가져오기
-        var userName = userIdToName(data.user);
-        console.log(userName);
+    //채팅을 한 유저네임 가져오기
+    var userName = userIdToName(data.user);
+
+    if (data.type == 'message' && userName != 'bot') {
+        answer = '';
+
         //채팅내용을 저장
         var text = data.text;
-
+        
         //console.log(data.ts + ':' + data.channel+'['+channelName+']:'+data.user+'['+userName+']:'+data.text);
 
         //조건 시작
@@ -104,7 +113,7 @@ bot.on('message', function (data) {
                 var $ = cheerio.load(body);
                 var answer = 'NAVER 실시간 인기검색어 1~20위\n';
                 var popularList = $("div.ah_list li.ah_item a.ah_a");
-                console.log(popularList);
+
                 popularList.each(function (data) {
                     var num = $(this).find('span.ah_r').text();
                     var text = $(this).find('span.ah_k').text();
